@@ -15,7 +15,7 @@ app.post('/todos', (req,res) => {
 
   todo.save().then((doc) => {
       res.send(doc);
-      console.log(doc);
+      //console.log(doc);
   },(e) => {
       res.status(400).send(e)
   })
@@ -23,4 +23,7 @@ app.post('/todos', (req,res) => {
 
 app.listen(3000, () => {
 console.log("server started on 3000");
-})
+});
+
+module.exports = {app};
+
