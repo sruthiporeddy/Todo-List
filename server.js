@@ -9,7 +9,7 @@ var { User } = require('./model/user');
 var app = express();
 app.use(bodyParser.json());
 
-/*
+
 app.post('/todos', (req,res) => {
   var todo = new Todo({
       text: req.body.text
@@ -29,7 +29,7 @@ app.get('/todos', (req,res) => {
     },(err) => {
         res.status(400).send(err);
     });
-}); */
+}); 
 
 app.post('/users', (req,res) => {
     var user = new User({

@@ -1,8 +1,10 @@
 const expect = require('expect');
 const request = require('supertest');
+const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../model/todo');
+const {User} = require('./../model/user');
 
 const todos = [{
     text: 'First Todo item'
@@ -12,12 +14,26 @@ const todos = [{
     text: 'Third Todo item'
 }];
 
+const users = [{
+    _id: new ObjectID(),
+    email: 'sruthiporeddy@gmail.com'
+},{
+    _id: new ObjectID(),
+    email:'babji2286@gmail.com'
+}];
 
 beforeEach((done) => {
-    Todo.remove({}).then(() => {
+    Todo.deleteMany({}).then(() => {
         return Todo.insertMany(todos);
     }).then(() => done()) ; 
+   
 });  
+beforeEach((done) => {
+    User.deleteMany({}).then(() => {
+        return User.insertMany(users);
+    }).then(() => done());
+});
+
 
 describe('POST /todos', () => {
     it('Should create a new Todo',(done) => {
@@ -69,4 +85,29 @@ describe('GET /todos', () => {
         })
         .end(done)
     });
+});
+
+describe('GET /users/:id', () => {
+    it('Should get user based on Id', (done) => {
+        request(app)
+        .get(`/users/${users[0]._id.toHexString()}`)
+        .expect(200)
+        .expect((res) => {
+            expect(res.body.user.email).toBe(users[0].email);
+        })
+        .end(done)
+    });
+    it('should not get user on empty Id', (done) => {
+        var hexId = new ObjectID().toHexString();
+        request(app)
+        .get(`/users/${hexId}`)
+        .expect(404)
+        .end(done)
+    })
+    it('should not get user on invalid id', (done) => {
+        request(app)
+        .get(`/users/${users[0]._id.toHexString()+12}`)
+        .expect(404)
+        .end(done)
+    })
 });
