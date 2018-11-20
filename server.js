@@ -8,6 +8,7 @@ var { User } = require('./model/user');
 var app = express();
 app.use(bodyParser.json());
 
+/*
 app.post('/todos', (req,res) => {
   var todo = new Todo({
       text: req.body.text
@@ -20,14 +21,35 @@ app.post('/todos', (req,res) => {
       res.status(400).send(e)
   })
 });
+ */
+app.post('/users', (req,res) => {
+    var user = new User({
+        email: req.body.email
+    });
+  
+    user.save().then((doc) => {
+        res.send(doc);
+        console.log(doc);
+    },(e) => {
+        res.status(400).send(e)
+    })
+  });
 
-app.get('/todos', (req,res) => {
+
+  app.get('/users', (req,res) => {
+    User.find().then((users) => {
+        res.send({ users});
+    },(err) => {
+        res.status(400).send(err);
+    });
+});
+/*app.get('/todos', (req,res) => {
     Todo.find().then((todos) => {
         res.send({ todos});
     },(err) => {
         res.status(400).send(err);
     });
-});
+}); */
 
 app.listen(3000, () => {
 console.log("server started on 3000");

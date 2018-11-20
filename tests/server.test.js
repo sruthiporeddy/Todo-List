@@ -12,11 +12,12 @@ const todos = [{
     text: 'Third Todo item'
 }];
 
+
 beforeEach((done) => {
     Todo.remove({}).then(() => {
         return Todo.insertMany(todos);
     }).then(() => done()) ; 
-}); 
+});  
 
 describe('POST /todos', () => {
     it('Should create a new Todo',(done) => {
