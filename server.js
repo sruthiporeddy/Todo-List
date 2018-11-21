@@ -2,7 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var {ObjectID} = require('mongodb');
 
-var { mongoose } = require('./db/mongoose-connect');
+var { mongoose } = require('./mongoose_db/mongoose-connect');
 var { Todo } = require('./model/todo');
 var { User } = require('./model/user');
 
@@ -68,6 +68,19 @@ app.get('/users/:id', (req,res) => {
         res.send({user});
     }).catch((err) => res.status(400).send())
 });
+
+app.delete('/users/:id', (req,res) => {
+    var id = req.params.id;
+    if(!ObjectID.isValid(id)){
+        return res.status(404).send();
+    }
+    User.findByIdAndRemove(id).then((user) => {
+        if(!user){
+            return res.status(404).send();
+        }
+        res.send({user});
+    }).catch((err) => res.status(400).send()); 
+})
 
 app.listen(port, () => {
 console.log(`server started on ${port}`);

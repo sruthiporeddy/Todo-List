@@ -63,7 +63,7 @@ describe('POST /todos', () => {
         .post('/todos')
         .send({})
         .expect(400)
-        .end((err,res) => {
+        .end((err,result) => {
             if(err) {
                 return done(err);
             }
@@ -111,3 +111,49 @@ describe('GET /users/:id', () => {
         .end(done)
     })
 });
+
+/*
+describe('DELETE /users', () => {
+    it('Should delete all users', (done) => {
+        request(app)
+        .delete('/users')
+        .expect(200)
+        .end(done)
+    })
+});
+*/
+
+describe('DELETE /users/:id', () => {
+    it('Should delete user using the id', (done) => {
+        const hexId = users[0]._id.toHexString();
+        request(app)
+        .delete(`/users/${hexId}`)
+        .expect(200)
+        .expect((res) => {
+            expect(res.body.user._id).toBe(hexId);
+        })
+        .end((err,res) => {
+            if(err){
+                return done(err);
+            }
+            User.findById(hexId).then((user) => {
+                expect(user).toBe(null);
+                done();
+            }).catch((e) => done(e));
+
+        });
+    });
+    it('Should return 404 when user is not found', (done) => {
+        const id = new ObjectID().toHexString()
+        request(app)
+        .delete(`/users/${id}`)
+        .expect(404)
+        .end(done)
+    })
+    it('Should return 400 when invalid user is passed', (done) => {
+        request(app)
+        .delete(`/users/${users[0]._id.toHexString()+2}`)
+        .expect(404)
+        .end(done)
+    })
+})
